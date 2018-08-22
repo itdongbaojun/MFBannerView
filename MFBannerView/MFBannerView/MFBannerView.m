@@ -13,11 +13,11 @@ typedef struct {
     NSInteger section;
 }MFIndexSection;
 
-NS_INLINE BOOL TYEqualIndexSection(MFIndexSection indexSection1,MFIndexSection indexSection2) {
+NS_INLINE BOOL MFEqualIndexSection(MFIndexSection indexSection1,MFIndexSection indexSection2) {
     return indexSection1.index == indexSection2.index && indexSection1.section == indexSection2.section;
 }
 
-NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) {
+NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) {
     MFIndexSection indexSection;
     indexSection.index = index;
     indexSection.section = section;
@@ -266,11 +266,11 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
         _firstScrollIndex = -1;
     }
     if (!_isInfiniteLoop) {
-        [self scrollToItemAtIndexSection:TYMakeIndexSection(index, 0) animate:animate];
+        [self scrollToItemAtIndexSection:MFMakeIndexSection(index, 0) animate:animate];
         return;
     }
     
-    [self scrollToItemAtIndexSection:TYMakeIndexSection(index, index >= self.curIndex ? _indexSection.section : _indexSection.section+1) animate:animate];
+    [self scrollToItemAtIndexSection:MFMakeIndexSection(index, index >= self.curIndex ? _indexSection.section : _indexSection.section+1) animate:animate];
 }
 
 - (void)scrollToItemAtIndexSection:(MFIndexSection)indexSection animate:(BOOL)animate {
@@ -346,39 +346,39 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
     
     if (!_isInfiniteLoop) {
         if (direction == MFBannerScrollDirectionRight && indexSection.index == _numberOfItems - 1) {
-            return _autoScrollInterval > 0 ? TYMakeIndexSection(0, 0) : indexSection;
+            return _autoScrollInterval > 0 ? MFMakeIndexSection(0, 0) : indexSection;
         } else if (direction == MFBannerScrollDirectionRight) {
-            return TYMakeIndexSection(indexSection.index+1, 0);
+            return MFMakeIndexSection(indexSection.index+1, 0);
         }
         
         if (indexSection.index == 0) {
-            return _autoScrollInterval > 0 ? TYMakeIndexSection(_numberOfItems - 1, 0) : indexSection;
+            return _autoScrollInterval > 0 ? MFMakeIndexSection(_numberOfItems - 1, 0) : indexSection;
         }
-        return TYMakeIndexSection(indexSection.index-1, 0);
+        return MFMakeIndexSection(indexSection.index-1, 0);
     }
     
     if (direction == MFBannerScrollDirectionRight) {
         if (indexSection.index < _numberOfItems-1) {
-            return TYMakeIndexSection(indexSection.index+1, indexSection.section);
+            return MFMakeIndexSection(indexSection.index+1, indexSection.section);
         }
         if (indexSection.section >= kBannerViewMaxSectionCount-1) {
-            return TYMakeIndexSection(indexSection.index, kBannerViewMaxSectionCount-1);
+            return MFMakeIndexSection(indexSection.index, kBannerViewMaxSectionCount-1);
         }
-        return TYMakeIndexSection(0, indexSection.section+1);
+        return MFMakeIndexSection(0, indexSection.section+1);
     }
     
     if (indexSection.index > 0) {
-        return TYMakeIndexSection(indexSection.index-1, indexSection.section);
+        return MFMakeIndexSection(indexSection.index-1, indexSection.section);
     }
     if (indexSection.section <= 0) {
-        return TYMakeIndexSection(indexSection.index, 0);
+        return MFMakeIndexSection(indexSection.index, 0);
     }
-    return TYMakeIndexSection(_numberOfItems-1, indexSection.section-1);
+    return MFMakeIndexSection(_numberOfItems-1, indexSection.section-1);
 }
 
 - (MFIndexSection)caculateIndexSectionWithOffsetX:(CGFloat)offsetX {
     if (_numberOfItems <= 0) {
-        return TYMakeIndexSection(0, 0);
+        return MFMakeIndexSection(0, 0);
     }
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)_collectionView.collectionViewLayout;
     CGFloat leftEdge = _isInfiniteLoop ? _layout.sectionInset.left : _layout.onlyOneSectionInset.left;
@@ -397,7 +397,7 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
         curIndex = itemIndex%_numberOfItems;
         curSection = itemIndex/_numberOfItems;
     }
-    return TYMakeIndexSection(curIndex, curSection);
+    return MFMakeIndexSection(curIndex, curSection);
 }
 
 - (CGFloat)caculateOffsetXAtIndexSection:(MFIndexSection)indexSection{
@@ -430,7 +430,7 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
     if (index >= _numberOfItems) {
         index = 0;
     }
-    [self scrollToItemAtIndexSection:TYMakeIndexSection(index, _isInfiniteLoop ? kBannerViewMaxSectionCount/3 : 0) animate:NO];
+    [self scrollToItemAtIndexSection:MFMakeIndexSection(index, _isInfiniteLoop ? kBannerViewMaxSectionCount/3 : 0) animate:NO];
     if (!_isInfiniteLoop && _indexSection.index < 0) {
         [self scrollViewDidScroll:_collectionView];
     }
@@ -503,7 +503,7 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
         [_delegate bannerViewDidScroll:self];
     }
     
-    if (_delegateFlags.didScrollFromIndexToNewIndex && !TYEqualIndexSection(_indexSection, indexSection)) {
+    if (_delegateFlags.didScrollFromIndexToNewIndex && !MFEqualIndexSection(_indexSection, indexSection)) {
         [_delegate bannerView:self didScrollFromIndex:MAX(indexSection.index, 0) toIndex:_indexSection.index];
     }
 }
@@ -519,7 +519,7 @@ NS_INLINE MFIndexSection TYMakeIndexSection(NSInteger index, NSInteger section) 
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    if (fabs(velocity.x) < 0.35 || !TYEqualIndexSection(_beginDragIndexSection, _indexSection)) {
+    if (fabs(velocity.x) < 0.35 || !MFEqualIndexSection(_beginDragIndexSection, _indexSection)) {
         targetContentOffset->x = [self caculateOffsetXAtIndexSection:_indexSection];
         return;
     }
