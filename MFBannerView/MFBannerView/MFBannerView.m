@@ -26,7 +26,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
 
 @interface MFBannerView()<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MFBannerTransformLayoutDelegate> {
     struct {
-        unsigned int pagerViewDidScroll   :1;
+        unsigned int bannerViewDidScroll   :1;
         unsigned int didScrollFromIndexToNewIndex   :1;
         unsigned int initializeTransformAttributes   :1;
         unsigned int applyTransformToAttributes   :1;
@@ -219,7 +219,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
 
 - (void)setDelegate:(id<MFBannerViewDelegate>)delegate {
     _delegate = delegate;
-    _delegateFlags.pagerViewDidScroll = [delegate respondsToSelector:@selector(bannerViewDidScroll:)];
+    _delegateFlags.bannerViewDidScroll = [delegate respondsToSelector:@selector(bannerViewDidScroll:)];
     _delegateFlags.didScrollFromIndexToNewIndex = [delegate respondsToSelector:@selector(bannerView:didScrollFromIndex:toIndex:)];
     _delegateFlags.initializeTransformAttributes = [delegate respondsToSelector:@selector(bannerView:initializeTransformAttributes:)];
     _delegateFlags.applyTransformToAttributes = [delegate respondsToSelector:@selector(bannerView:applyTransformToAttributes:)];
@@ -251,7 +251,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (!_didLayout && !CGRectIsEmpty(self.frame) && _indexSection.index < 0) {
         _didLayout = YES;
     }
-    [self resetPagerViewAtIndex:_indexSection.index < 0 && !CGRectIsEmpty(self.frame) ? 0 :_indexSection.index];
+    [self resetBannerViewAtIndex:_indexSection.index < 0 && !CGRectIsEmpty(self.frame) ? 0 :_indexSection.index];
 }
 
 - (void)scrollToNearlyIndexAtDirection:(MFBannerScrollDirection)direction animate:(BOOL)animate {
@@ -266,10 +266,12 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
         _firstScrollIndex = -1;
     }
     if (!_isInfiniteLoop) {
+        //非无限轮播 只在第一个section内进行处理
         [self scrollToItemAtIndexSection:MFMakeIndexSection(index, 0) animate:animate];
         return;
     }
     
+    //无限循环需要在跨多section中进行处理
     [self scrollToItemAtIndexSection:MFMakeIndexSection(index, index >= self.curIndex ? _indexSection.section : _indexSection.section+1) animate:animate];
 }
 
@@ -326,7 +328,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     [self clearLayout];
     [self updateLayout];
     [_collectionView.collectionViewLayout invalidateLayout];
-    [self resetPagerViewAtIndex:_indexSection.index < 0 ? 0 :_indexSection.index];
+    [self resetBannerViewAtIndex:_indexSection.index < 0 ? 0 :_indexSection.index];
 }
 
 #pragma mark - pager index
@@ -340,33 +342,44 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
 }
 
 - (MFIndexSection)nearlyIndexPathForIndexSection:(MFIndexSection)indexSection direction:(MFBannerScrollDirection)direction {
+    
+    //越界返回当前
     if (indexSection.index < 0 || indexSection.index >= _numberOfItems) {
         return indexSection;
     }
     
+    //非无限轮播
     if (!_isInfiniteLoop) {
+        
+        //从右往左走， index+1，到右边尽头，复位到0.0最左边
         if (direction == MFBannerScrollDirectionRight && indexSection.index == _numberOfItems - 1) {
             return _autoScrollInterval > 0 ? MFMakeIndexSection(0, 0) : indexSection;
         } else if (direction == MFBannerScrollDirectionRight) {
             return MFMakeIndexSection(indexSection.index+1, 0);
         }
         
+        //从左向右走，index-1，到左边尽头，复位到最右边
         if (indexSection.index == 0) {
             return _autoScrollInterval > 0 ? MFMakeIndexSection(_numberOfItems - 1, 0) : indexSection;
         }
         return MFMakeIndexSection(indexSection.index-1, 0);
     }
     
+    //无限循环
     if (direction == MFBannerScrollDirectionRight) {
+        
+        //当前section内能处理，就在当前正常+
         if (indexSection.index < _numberOfItems-1) {
             return MFMakeIndexSection(indexSection.index+1, indexSection.section);
         }
+        //右边界
         if (indexSection.section >= kBannerViewMaxSectionCount-1) {
             return MFMakeIndexSection(indexSection.index, kBannerViewMaxSectionCount-1);
         }
         return MFMakeIndexSection(0, indexSection.section+1);
     }
     
+    //从左向右
     if (indexSection.index > 0) {
         return MFMakeIndexSection(indexSection.index-1, indexSection.section);
     }
@@ -419,7 +432,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     return MAX(offsetX, 0);
 }
 
-- (void)resetPagerViewAtIndex:(NSInteger)index {
+- (void)resetBannerViewAtIndex:(NSInteger)index {
     if (_didLayout && _firstScrollIndex >= 0) {
         index = _firstScrollIndex;
         _firstScrollIndex = -1;
@@ -436,12 +449,12 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     }
 }
 
-- (void)recyclePagerViewIfNeed {
+- (void)recycleBannerViewIfNeed {
     if (!_isInfiniteLoop) {
         return;
     }
     if (_indexSection.section > kBannerViewMaxSectionCount - kBannerViewMinSectionCount || _indexSection.section < kBannerViewMinSectionCount) {
-        [self resetPagerViewAtIndex:_indexSection.index];
+        [self resetBannerViewAtIndex:_indexSection.index];
     }
 }
 
@@ -461,7 +474,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (_dataSourceFlags.cellForItemAtIndex) {
         return [_dataSource bannerView:self cellForItemAtIndex:indexPath.row];
     }
-    NSAssert(NO, @"pagerView cellForItemAtIndex: is nil!");
+    NSAssert(NO, @"bannerView cellForItemAtIndex: is nil!");
     return nil;
 }
 
@@ -499,7 +512,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     MFIndexSection indexSection = _indexSection;
     _indexSection = newIndexSection;
     
-    if (_delegateFlags.pagerViewDidScroll) {
+    if (_delegateFlags.bannerViewDidScroll) {
         [_delegate bannerViewDidScroll:self];
     }
     
@@ -547,14 +560,14 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self recyclePagerViewIfNeed];
+    [self recycleBannerViewIfNeed];
     if ([_delegate respondsToSelector:@selector(bannerViewDidEndDecelerating:)]) {
         [_delegate bannerViewDidEndDecelerating:self];
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-    [self recyclePagerViewIfNeed];
+    [self recycleBannerViewIfNeed];
     if ([_delegate respondsToSelector:@selector(bannerViewDidEndScrollingAnimation:)]) {
         [_delegate bannerViewDidEndScrollingAnimation:self];
     }
