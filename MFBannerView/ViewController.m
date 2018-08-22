@@ -25,6 +25,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     self.title = @"MFBannerView";
+    self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self addBannerView];
     [self addPageControl];
