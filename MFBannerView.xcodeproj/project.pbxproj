@@ -15,6 +15,7 @@
 		9B433A49212D4D5400CA7B8C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A48212D4D5400CA7B8C /* main.m */; };
 		9B433A52212D4E8700CA7B8C /* MFBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A51212D4E8700CA7B8C /* MFBannerView.m */; };
 		9B433A55212D54CD00CA7B8C /* MFBannerLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A54212D54CD00CA7B8C /* MFBannerLayout.m */; };
+		9B433A58212D830000CA7B8C /* MFBannerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A57212D830000CA7B8C /* MFBannerCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		9B433A51212D4E8700CA7B8C /* MFBannerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFBannerView.m; sourceTree = "<group>"; };
 		9B433A53212D54CD00CA7B8C /* MFBannerLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MFBannerLayout.h; sourceTree = "<group>"; };
 		9B433A54212D54CD00CA7B8C /* MFBannerLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFBannerLayout.m; sourceTree = "<group>"; };
+		9B433A56212D830000CA7B8C /* MFBannerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MFBannerCell.h; sourceTree = "<group>"; };
+		9B433A57212D830000CA7B8C /* MFBannerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFBannerCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +72,8 @@
 				9B433A3A212D4D5300CA7B8C /* AppDelegate.m */,
 				9B433A3C212D4D5300CA7B8C /* ViewController.h */,
 				9B433A3D212D4D5300CA7B8C /* ViewController.m */,
+				9B433A56212D830000CA7B8C /* MFBannerCell.h */,
+				9B433A57212D830000CA7B8C /* MFBannerCell.m */,
 				9B433A3F212D4D5300CA7B8C /* Main.storyboard */,
 				9B433A42212D4D5400CA7B8C /* Assets.xcassets */,
 				9B433A44212D4D5400CA7B8C /* LaunchScreen.storyboard */,
@@ -159,6 +164,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B433A58212D830000CA7B8C /* MFBannerCell.m in Sources */,
 				9B433A3E212D4D5300CA7B8C /* ViewController.m in Sources */,
 				9B433A55212D54CD00CA7B8C /* MFBannerLayout.m in Sources */,
 				9B433A52212D4E8700CA7B8C /* MFBannerView.m in Sources */,
