@@ -147,7 +147,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
         return;
     }
     
-    [self scrollToNearlyIndexAtDirection:MFBannerScrollDirectionRight animate:YES];
+    [self scrollToNearlyIndexAtDirection:MFBannerScrollDirectionAfter animate:YES];
 }
 
 #pragma mark - getter
@@ -285,8 +285,12 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (animate && [_delegate respondsToSelector:@selector(bannerViewWillBeginScrollingAnimation:)]) {
         [_delegate bannerViewWillBeginScrollingAnimation:self];
     }
-    CGFloat offset = [self caculateOffsetXAtIndexSection:indexSection];
-    [_collectionView setContentOffset:CGPointMake(offset, _collectionView.contentOffset.y) animated:animate];
+    CGFloat offset = [self caculateOffsetAtIndexSection:indexSection];
+    if(_layout.scrollDirection == MFBannerViewScrollDirectionHorizontal){
+        [_collectionView setContentOffset:CGPointMake(offset, _collectionView.contentOffset.y) animated:animate];
+    }else{
+        [_collectionView setContentOffset:CGPointMake(_collectionView.contentOffset.x, offset) animated:animate];
+    }
 }
 
 - (void)registerClass:(Class)Class forCellWithReuseIdentifier:(NSString *)identifier {
@@ -354,9 +358,9 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (!_isInfiniteLoop) {
         
         //从右往左走， index+1，到右边尽头，复位到0.0最左边
-        if (direction == MFBannerScrollDirectionRight && indexSection.index == _numberOfItems - 1) {
+        if (direction == MFBannerScrollDirectionAfter && indexSection.index == _numberOfItems - 1) {
             return _autoScrollInterval > 0 ? MFMakeIndexSection(0, 0) : indexSection;
-        } else if (direction == MFBannerScrollDirectionRight) {
+        } else if (direction == MFBannerScrollDirectionAfter) {
             return MFMakeIndexSection(indexSection.index+1, 0);
         }
         
@@ -368,7 +372,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     }
     
     //无限循环
-    if (direction == MFBannerScrollDirectionRight) {
+    if (direction == MFBannerScrollDirectionAfter) {
         
         //当前section内能处理，就在当前正常+
         if (indexSection.index < _numberOfItems-1) {
@@ -391,47 +395,90 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     return MFMakeIndexSection(_numberOfItems-1, indexSection.section-1);
 }
 
-- (MFIndexSection)caculateIndexSectionWithOffsetX:(CGFloat)offsetX {
+- (MFIndexSection)caculateIndexSectionWithOffset:(CGPoint)offset {
+
     if (_numberOfItems <= 0) {
         return MFMakeIndexSection(0, 0);
     }
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)_collectionView.collectionViewLayout;
-    CGFloat leftEdge = _isInfiniteLoop ? _layout.sectionInset.left : _layout.onlyOneSectionInset.left;
-    CGFloat width = CGRectGetWidth(_collectionView.frame);
-    CGFloat middleOffset = offsetX + width/2;
-    CGFloat itemWidth = layout.itemSize.width + layout.minimumInteritemSpacing;
-    NSInteger curIndex = 0;
-    NSInteger curSection = 0;
-    if (middleOffset - leftEdge >= 0) {
-        NSInteger itemIndex = (middleOffset - leftEdge+layout.minimumInteritemSpacing/2)/itemWidth;
-        if (itemIndex < 0) {
-            itemIndex = 0;
-        }else if (itemIndex >= _numberOfItems*kBannerViewMaxSectionCount) {
-            itemIndex = _numberOfItems*kBannerViewMaxSectionCount-1;
+    
+    if(_layout.scrollDirection == MFBannerViewScrollDirectionHorizontal){
+     
+        CGFloat offsetX = offset.x;
+        CGFloat leftEdge = _isInfiniteLoop ? _layout.sectionInset.left : _layout.onlyOneSectionInset.left;
+        CGFloat width = CGRectGetWidth(_collectionView.frame);
+        CGFloat middleOffset = offsetX + width/2;
+        CGFloat itemWidth = layout.itemSize.width + layout.minimumInteritemSpacing;
+        NSInteger curIndex = 0;
+        NSInteger curSection = 0;
+        if (middleOffset - leftEdge >= 0) {
+            NSInteger itemIndex = (middleOffset - leftEdge+layout.minimumInteritemSpacing/2)/itemWidth;
+            if (itemIndex < 0) {
+                itemIndex = 0;
+            }else if (itemIndex >= _numberOfItems*kBannerViewMaxSectionCount) {
+                itemIndex = _numberOfItems*kBannerViewMaxSectionCount-1;
+            }
+            curIndex = itemIndex%_numberOfItems;
+            curSection = itemIndex/_numberOfItems;
         }
-        curIndex = itemIndex%_numberOfItems;
-        curSection = itemIndex/_numberOfItems;
+        return MFMakeIndexSection(curIndex, curSection);
+    }else{
+        
+        CGFloat offsetY = offset.y;
+        CGFloat topEdge = _isInfiniteLoop ? _layout.sectionInset.top : _layout.onlyOneSectionInset.top;
+        CGFloat height = CGRectGetHeight(_collectionView.frame);
+        CGFloat middleOffset = offsetY + height/2;
+        CGFloat itemHeight = layout.itemSize.height + layout.minimumInteritemSpacing;
+        NSInteger curIndex = 0;
+        NSInteger curSection = 0;
+        if (middleOffset - topEdge >= 0) {
+            NSInteger itemIndex = (middleOffset - topEdge+layout.minimumInteritemSpacing/2)/itemHeight;
+            if (itemIndex < 0) {
+                itemIndex = 0;
+            }else if (itemIndex >= _numberOfItems*kBannerViewMaxSectionCount) {
+                itemIndex = _numberOfItems*kBannerViewMaxSectionCount-1;
+            }
+            curIndex = itemIndex%_numberOfItems;
+            curSection = itemIndex/_numberOfItems;
+        }
+        return MFMakeIndexSection(curIndex, curSection);
     }
-    return MFMakeIndexSection(curIndex, curSection);
 }
 
-- (CGFloat)caculateOffsetXAtIndexSection:(MFIndexSection)indexSection{
+- (CGFloat)caculateOffsetAtIndexSection:(MFIndexSection)indexSection{
     if (_numberOfItems == 0) {
         return 0;
     }
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)_collectionView.collectionViewLayout;
     UIEdgeInsets edge = _isInfiniteLoop ? _layout.sectionInset : _layout.onlyOneSectionInset;
-    CGFloat leftEdge = edge.left;
-    CGFloat rightEdge = edge.right;
-    CGFloat width = CGRectGetWidth(_collectionView.frame);
-    CGFloat itemWidth = layout.itemSize.width + layout.minimumInteritemSpacing;
-    CGFloat offsetX = 0;
-    if (!_isInfiniteLoop && indexSection.index == _numberOfItems - 1) {
-        offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - (width - itemWidth) -  layout.minimumInteritemSpacing + rightEdge;
-    }else {
-        offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - layout.minimumInteritemSpacing/2 - (width - itemWidth)/2;
+    
+    if(_layout.scrollDirection == MFBannerViewScrollDirectionHorizontal){
+        
+        CGFloat leftEdge = edge.left;
+        CGFloat rightEdge = edge.right;
+        CGFloat width = CGRectGetWidth(_collectionView.frame);
+        CGFloat itemWidth = layout.itemSize.width + layout.minimumInteritemSpacing;
+        CGFloat offsetX = 0;
+        if (!_isInfiniteLoop && indexSection.index == _numberOfItems - 1) {
+            offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - (width - itemWidth) -  layout.minimumInteritemSpacing + rightEdge;
+        }else {
+            offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - layout.minimumInteritemSpacing/2 - (width - itemWidth)/2;
+        }
+        return MAX(offsetX, 0);
+    }else{
+        
+        CGFloat topEdge = edge.top;
+        CGFloat bottomEdge = edge.bottom;
+        CGFloat height = CGRectGetHeight(_collectionView.frame);
+        CGFloat itemHeight = layout.itemSize.height + layout.minimumInteritemSpacing;
+        CGFloat offsetY = 0;
+        if (!_isInfiniteLoop && indexSection.index == _numberOfItems - 1) {
+            offsetY = topEdge + itemHeight*(indexSection.index + indexSection.section*_numberOfItems) - (height - itemHeight) -  layout.minimumInteritemSpacing + bottomEdge;
+        }else {
+            offsetY = topEdge + itemHeight*(indexSection.index + indexSection.section*_numberOfItems) - layout.minimumInteritemSpacing/2 - (height - itemHeight)/2;
+        }
+        return MAX(offsetY, 0);
     }
-    return MAX(offsetX, 0);
 }
 
 - (void)resetBannerViewAtIndex:(NSInteger)index {
@@ -507,7 +554,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (!_didLayout) {
         return;
     }
-    MFIndexSection newIndexSection =  [self caculateIndexSectionWithOffsetX:scrollView.contentOffset.x];
+    MFIndexSection newIndexSection =  [self caculateIndexSectionWithOffset:scrollView.contentOffset];
     if (_numberOfItems <= 0 || ![self isValidIndexSection:newIndexSection]) {
         return;
     }
@@ -527,23 +574,39 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     if (_autoScrollInterval > 0) {
         [self removeTimer];
     }
-    _beginDragIndexSection = [self caculateIndexSectionWithOffsetX:scrollView.contentOffset.x];
+    _beginDragIndexSection = [self caculateIndexSectionWithOffset:scrollView.contentOffset];
     if ([_delegate respondsToSelector:@selector(bannerViewWillBeginDragging:)]) {
         [_delegate bannerViewWillBeginDragging:self];
     }
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    if (fabs(velocity.x) < 0.35 || !MFEqualIndexSection(_beginDragIndexSection, _indexSection)) {
-        targetContentOffset->x = [self caculateOffsetXAtIndexSection:_indexSection];
-        return;
+    
+    if(_layout.scrollDirection == MFBannerViewScrollDirectionHorizontal){
+        
+        if (fabs(velocity.x) < 0.35 || !MFEqualIndexSection(_beginDragIndexSection, _indexSection)) {
+            targetContentOffset->x = [self caculateOffsetAtIndexSection:_indexSection];
+            return;
+        }
+        MFBannerScrollDirection direction = MFBannerScrollDirectionAfter;
+        if ((scrollView.contentOffset.x < 0 && targetContentOffset->x <= 0) || (targetContentOffset->x < scrollView.contentOffset.x && scrollView.contentOffset.x < scrollView.contentSize.width - scrollView.frame.size.width)) {
+            direction = MFBannerScrollDirectionBefore;
+        }
+        MFIndexSection indexSection = [self nearlyIndexPathForIndexSection:_indexSection direction:direction];
+        targetContentOffset->x = [self caculateOffsetAtIndexSection:indexSection];
+    }else{
+        
+        if (fabs(velocity.y) < 0.35 || !MFEqualIndexSection(_beginDragIndexSection, _indexSection)) {
+            targetContentOffset->x = [self caculateOffsetAtIndexSection:_indexSection];
+            return;
+        }
+        MFBannerScrollDirection direction = MFBannerScrollDirectionAfter;
+        if ((scrollView.contentOffset.y < 0 && targetContentOffset->y <= 0) || (targetContentOffset->y < scrollView.contentOffset.y && scrollView.contentOffset.y < scrollView.contentSize.height - scrollView.frame.size.height)) {
+            direction = MFBannerScrollDirectionBefore;
+        }
+        MFIndexSection indexSection = [self nearlyIndexPathForIndexSection:_indexSection direction:direction];
+        targetContentOffset->y = [self caculateOffsetAtIndexSection:indexSection];
     }
-    MFBannerScrollDirection direction = MFBannerScrollDirectionRight;
-    if ((scrollView.contentOffset.x < 0 && targetContentOffset->x <= 0) || (targetContentOffset->x < scrollView.contentOffset.x && scrollView.contentOffset.x < scrollView.contentSize.width - scrollView.frame.size.width)) {
-        direction = MFBannerScrollDirectionLeft;
-    }
-    MFIndexSection indexSection = [self nearlyIndexPathForIndexSection:_indexSection direction:direction];
-    targetContentOffset->x = [self caculateOffsetXAtIndexSection:indexSection];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {

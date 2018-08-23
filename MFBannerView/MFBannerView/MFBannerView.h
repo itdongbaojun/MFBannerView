@@ -11,10 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// bannerView滚动的方向（目前是左右，后续改成水平和竖直）
 typedef NS_ENUM(NSUInteger, MFBannerScrollDirection) {
-    MFBannerScrollDirectionLeft,
-    MFBannerScrollDirectionRight,
+    MFBannerScrollDirectionBefore,  //水平滚动的left，垂直滚动的top
+    MFBannerScrollDirectionAfter    //水平滚动的right，垂直滚动的bottom
 };
 
 @class MFBannerView;
