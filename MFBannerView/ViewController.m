@@ -88,7 +88,7 @@
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    self.bannerView.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 200);
+    self.bannerView.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame));
     
     CGFloat pageControlHeight = 18.f;
     CGFloat pageControlWidth = 33.f;
@@ -119,7 +119,7 @@
 - (MFBannerLayout *)layoutForBannerView:(MFBannerView *)bannerView {
     
     MFBannerLayout *layout = [[MFBannerLayout alloc] init];
-    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.6);
+    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.8);
     layout.itemSpacing = 15.0;
     layout.layoutType = MFBannerLayoutCoverflow;
     layout.scrollDirection = _horOrVerSwitch.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;

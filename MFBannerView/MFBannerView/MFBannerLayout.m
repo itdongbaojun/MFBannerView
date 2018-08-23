@@ -351,14 +351,14 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
             if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
                 translate = (1-cos(angle*1.2*M_PI))*attributes.size.width;
             }else{
-                translate = (1-cos(angle*1.0*M_PI))*attributes.size.height;
+                translate = (1-cos(angle*1.2*M_PI))*attributes.size.height;
             }
             break;
             case MFTransformLayoutItemAfter:
             if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
                 translate = -(1-cos(angle*1.2*M_PI))*attributes.size.width;
             }else{
-                translate = -(1-cos(angle*1.0*M_PI))*attributes.size.height;
+                translate = -(1-cos(angle*1.2*M_PI))*attributes.size.height;
             }
             angle = -angle;
             break;
