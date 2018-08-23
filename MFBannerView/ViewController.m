@@ -109,7 +109,7 @@
 - (MFBannerLayout *)layoutForBannerView:(MFBannerView *)bannerView {
     
     MFBannerLayout *layout = [[MFBannerLayout alloc] init];
-    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.6, CGRectGetHeight(bannerView.frame)*0.4);
+    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.6);
     layout.itemSpacing = 15.0;
     layout.layoutType = MFBannerLayoutCoverflow;
     layout.scrollDirection = MFBannerViewScrollDirectionVertical;
