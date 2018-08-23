@@ -16,6 +16,9 @@
 @property (nonatomic, weak) UILabel *pageControl;
 @property (nonatomic, copy) NSArray *datas;
 
+@property (nonatomic, weak) UILabel *horOrVerLabel;
+@property (nonatomic, weak) UISwitch *horOrVerSwitch;
+
 @end
 
 @implementation ViewController
@@ -32,6 +35,9 @@
     
     //模拟加载数据
     [self loadData];
+    
+    //添加demo控制
+    [self addSwitchView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -89,6 +95,10 @@
     CGFloat pageControlX = CGRectGetWidth(self.bannerView.frame) - 7.5f - pageControlWidth;
     CGFloat pageControlY = CGRectGetHeight(self.bannerView.frame) - 7.5f - pageControlHeight;
     self.pageControl.frame = CGRectMake(pageControlX, pageControlY, pageControlWidth, pageControlHeight);
+    
+    self.horOrVerLabel.frame = CGRectMake(0, CGRectGetMaxY(self.bannerView.frame) + 15.0, 0, 0);
+    [self.horOrVerLabel sizeToFit];
+    self.horOrVerSwitch.frame = CGRectMake(CGRectGetMaxX(self.horOrVerLabel.frame), CGRectGetMaxY(self.bannerView.frame) + 10.0, 0, 0);
 }
 
 #pragma mark - MFBannerViewDataSource
@@ -112,7 +122,7 @@
     layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.6);
     layout.itemSpacing = 15.0;
     layout.layoutType = MFBannerLayoutCoverflow;
-    layout.scrollDirection = MFBannerViewScrollDirectionVertical;
+    layout.scrollDirection = _horOrVerSwitch.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
     return layout;
 }
 
@@ -121,6 +131,30 @@
 - (void)bannerView:(MFBannerView *)bannerView didScrollFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
     
     self.pageControl.text = [NSString stringWithFormat:@"%@/%@",@(toIndex + 1),@(self.datas.count)];
+}
+
+#pragma mark - demo
+
+- (void)addSwitchView {
+    
+    UILabel *horOrVerLabel = [[UILabel alloc] init];
+    horOrVerLabel.text = @"水平滚动";
+    horOrVerLabel.textColor = [UIColor blackColor];
+    horOrVerLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:horOrVerLabel];
+    _horOrVerLabel = horOrVerLabel;
+    
+    UISwitch *horOrVerSwitch = [[UISwitch alloc] init];
+    [horOrVerSwitch addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:horOrVerSwitch];
+    _horOrVerSwitch = horOrVerSwitch;
+}
+
+- (void)switchChange:(UISwitch *)sender {
+    
+    self.horOrVerLabel.text = sender.isOn ? @"垂直滚动" : @"水平滚动";
+    self.bannerView.layout.scrollDirection = sender.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
+    [self.bannerView setNeedUpdateLayout];
 }
 
 @end
