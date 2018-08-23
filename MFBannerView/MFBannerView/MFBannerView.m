@@ -426,7 +426,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     CGFloat width = CGRectGetWidth(_collectionView.frame);
     CGFloat itemWidth = layout.itemSize.width + layout.minimumInteritemSpacing;
     CGFloat offsetX = 0;
-    if (!_isInfiniteLoop && !_layout.itemHorizontalCenter && indexSection.index == _numberOfItems - 1) {
+    if (!_isInfiniteLoop && indexSection.index == _numberOfItems - 1) {
         offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - (width - itemWidth) -  layout.minimumInteritemSpacing + rightEdge;
     }else {
         offsetX = leftEdge + itemWidth*(indexSection.index + indexSection.section*_numberOfItems) - layout.minimumInteritemSpacing/2 - (width - itemWidth)/2;

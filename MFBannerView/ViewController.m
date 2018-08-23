@@ -111,6 +111,7 @@
     MFBannerLayout *layout = [[MFBannerLayout alloc] init];
     layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.8);
     layout.itemSpacing = 15.0;
+    layout.layoutType = MFBannerLayoutLayoutLinear;
     return layout;
 }
 

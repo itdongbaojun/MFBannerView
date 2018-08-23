@@ -9,9 +9,9 @@
 #import "MFBannerLayout.h"
 
 typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
-    MFTransformLayoutItemLeft,
-    MFTransformLayoutItemCenter,
-    MFTransformLayoutItemRight,
+    MFTransformLayoutItemBefore,  //水平的left，垂直的top
+    MFTransformLayoutItemCurrent,   //center
+    MFTransformLayoutItemAfter  //水平的right，垂直的bottom
 };
 
 @interface MFBannerLayout()
@@ -38,28 +38,58 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 
 - (UIEdgeInsets)onlyOneSectionInset {
     
-    CGFloat leftSpace = _pageView && !_isInfiniteLoop && _itemHorizontalCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.left;
-    CGFloat rightSpace = _pageView && !_isInfiniteLoop && _itemHorizontalCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.right;
-    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-    return UIEdgeInsetsMake(verticalSpace, leftSpace, verticalSpace, rightSpace);
+    if(_scrollDirection == MFBannerViewScrollDirectionHorizontal){
+     
+        CGFloat leftSpace = _pageView && !_isInfiniteLoop ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.left;
+        CGFloat rightSpace = _pageView && !_isInfiniteLoop ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.right;
+        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+        return UIEdgeInsetsMake(verticalSpace, leftSpace, verticalSpace, rightSpace);
+    }else{
+        
+        CGFloat bottomSpace = _pageView && !_isInfiniteLoop ? (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2 : _sectionInset.bottom;
+        CGFloat topSpace = _pageView && !_isInfiniteLoop ? (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2 : _sectionInset.top;
+        CGFloat horizontalSpace = (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2;
+        return UIEdgeInsetsMake(topSpace, horizontalSpace, bottomSpace, horizontalSpace);
+    }
 }
 
 - (UIEdgeInsets)firstSectionInset {
     
-    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-    return UIEdgeInsetsMake(verticalSpace, _sectionInset.left, verticalSpace, _itemSpacing);
+    if(_scrollDirection == MFBannerViewScrollDirectionHorizontal){
+
+        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+        return UIEdgeInsetsMake(verticalSpace, _sectionInset.left, verticalSpace, _itemSpacing);
+    }else{
+        
+        CGFloat horizontalSpace = (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2;
+        return UIEdgeInsetsMake(_sectionInset.top, horizontalSpace, _itemSpacing, horizontalSpace);
+    }
 }
 
 - (UIEdgeInsets)lastSectionInset {
     
-    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-    return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _sectionInset.right);
+    if(_scrollDirection == MFBannerViewScrollDirectionHorizontal){
+
+        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+        return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _sectionInset.right);
+    }else{
+        
+        CGFloat horizontalSpace = (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2;
+        return UIEdgeInsetsMake(0, horizontalSpace, _sectionInset.bottom, horizontalSpace);
+    }
 }
 
 - (UIEdgeInsets)middleSectionInset {
     
-    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-    return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _itemSpacing);
+    if(_scrollDirection == MFBannerViewScrollDirectionHorizontal){
+
+        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+        return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _itemSpacing);
+    }else{
+        
+        CGFloat horizontalSpace = (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2;
+        return UIEdgeInsetsMake(0, horizontalSpace, _itemSpacing, horizontalSpace);
+    }
 }
 
 @end
@@ -135,15 +165,30 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
     return _layout.itemSpacing;
 }
 
-- (MFTransformLayoutItemDirection)directionWithCenterX:(CGFloat)centerX {
-    MFTransformLayoutItemDirection direction= MFTransformLayoutItemRight;
-    CGFloat contentCenterX = self.collectionView.contentOffset.x + CGRectGetWidth(self.collectionView.frame)/2;
-    if (ABS(centerX - contentCenterX) < 0.5) {
-        direction = MFTransformLayoutItemCenter;
-    }else if (centerX - contentCenterX < 0) {
-        direction = MFTransformLayoutItemLeft;
+- (MFTransformLayoutItemDirection)directionWithCenter:(CGPoint)center {
+    MFTransformLayoutItemDirection direction= MFTransformLayoutItemAfter;
+    
+    if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+       
+        CGFloat centerX = center.x;
+        CGFloat contentCenterX = self.collectionView.contentOffset.x + CGRectGetWidth(self.collectionView.frame)/2;
+        if (ABS(centerX - contentCenterX) < 0.5) {
+            direction = MFTransformLayoutItemCurrent;
+        }else if (centerX - contentCenterX < 0) {
+            direction = MFTransformLayoutItemBefore;
+        }
+        return direction;
+    }else{
+        
+        CGFloat centerY = center.y;
+        CGFloat contentCenterY = self.collectionView.contentOffset.y + CGRectGetHeight(self.collectionView.frame)/2;
+        if (ABS(centerY - contentCenterY) < 0.5) {
+            direction = MFTransformLayoutItemCurrent;
+        }else if (centerY - contentCenterY < 0) {
+            direction = MFTransformLayoutItemBefore;
+        }
+        return direction;
     }
-    return direction;
 }
 
 #pragma mark - layout
@@ -217,28 +262,43 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 #pragma mark - LinearTransform
 
 - (void)applyLinearTransformToAttributes:(UICollectionViewLayoutAttributes *)attributes {
-    CGFloat collectionViewWidth = self.collectionView.frame.size.width;
-    if (collectionViewWidth <= 0) {
-        return;
+    
+    if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+     
+        CGFloat collectionViewWidth = self.collectionView.frame.size.width;
+        if (collectionViewWidth <= 0) {
+            return;
+        }
+        CGFloat centetX = self.collectionView.contentOffset.x + collectionViewWidth/2;
+        CGFloat delta = ABS(attributes.center.x - centetX);
+        CGFloat scale = MAX(1 - delta/collectionViewWidth*_layout.rateOfChange, _layout.minimumScale);
+        CGFloat alpha = MAX(1 - delta/collectionViewWidth, _layout.minimumAlpha);
+        [self applyLinearTransformToAttributes:attributes scale:scale alpha:alpha];
+    }else{
+        
+        CGFloat collectionHeight = self.collectionView.frame.size.height;
+        if (collectionHeight <= 0) {
+            return;
+        }
+        CGFloat centetY = self.collectionView.contentOffset.y + collectionHeight/2;
+        CGFloat delta = ABS(attributes.center.y - centetY);
+        CGFloat scale = MAX(1 - delta/collectionHeight*_layout.rateOfChange, _layout.minimumScale);
+        CGFloat alpha = MAX(1 - delta/collectionHeight, _layout.minimumAlpha);
+        [self applyLinearTransformToAttributes:attributes scale:scale alpha:alpha];
     }
-    CGFloat centetX = self.collectionView.contentOffset.x + collectionViewWidth/2;
-    CGFloat delta = ABS(attributes.center.x - centetX);
-    CGFloat scale = MAX(1 - delta/collectionViewWidth*_layout.rateOfChange, _layout.minimumScale);
-    CGFloat alpha = MAX(1 - delta/collectionViewWidth, _layout.minimumAlpha);
-    [self applyLinearTransformToAttributes:attributes scale:scale alpha:alpha];
 }
 
 - (void)applyLinearTransformToAttributes:(UICollectionViewLayoutAttributes *)attributes scale:(CGFloat)scale alpha:(CGFloat)alpha {
     CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
     if (_layout.adjustSpacingWhenScroling) {
-        MFTransformLayoutItemDirection direction = [self directionWithCenterX:attributes.center.x];
+        MFTransformLayoutItemDirection direction = [self directionWithCenter:attributes.center];
         CGFloat translate = 0;
         switch (direction) {
-                case MFTransformLayoutItemLeft:
-                translate = 1.15 * attributes.size.width*(1-scale)/2;
+                case MFTransformLayoutItemBefore:
+                translate = 1.15 * ((self.scrollDirection == UICollectionViewScrollDirectionHorizontal) ? attributes.size.width : attributes.size.height)*(1-scale)/2;
                 break;
-                case MFTransformLayoutItemRight:
-                translate = -1.15 * attributes.size.width*(1-scale)/2;
+                case MFTransformLayoutItemAfter:
+                translate = -1.15 * ((self.scrollDirection == UICollectionViewScrollDirectionHorizontal) ? attributes.size.width : attributes.size.height)*(1-scale)/2;
                 break;
             default:
                 // center
@@ -255,28 +315,43 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 #pragma mark - CoverflowTransform
 
 - (void)applyCoverflowTransformToAttributes:(UICollectionViewLayoutAttributes *)attributes{
-    CGFloat collectionViewWidth = self.collectionView.frame.size.width;
-    if (collectionViewWidth <= 0) {
-        return;
+    
+    if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+    
+        CGFloat collectionViewWidth = self.collectionView.frame.size.width;
+        if (collectionViewWidth <= 0) {
+            return;
+        }
+        CGFloat centetX = self.collectionView.contentOffset.x + collectionViewWidth/2;
+        CGFloat delta = ABS(attributes.center.x - centetX);
+        CGFloat angle = MIN(delta/collectionViewWidth*(1-_layout.rateOfChange), _layout.maximumAngle);
+        CGFloat alpha = MAX(1 - delta/collectionViewWidth, _layout.minimumAlpha);
+        [self applyCoverflowTransformToAttributes:attributes angle:angle alpha:alpha];
+    }else{
+        
+        CGFloat collectionViewHeight = self.collectionView.frame.size.height;
+        if (collectionViewHeight <= 0) {
+            return;
+        }
+        CGFloat centetY = self.collectionView.contentOffset.y + collectionViewHeight/2;
+        CGFloat delta = ABS(attributes.center.y - centetY);
+        CGFloat angle = MIN(delta/collectionViewHeight*(1-_layout.rateOfChange), _layout.maximumAngle);
+        CGFloat alpha = MAX(1 - delta/collectionViewHeight, _layout.minimumAlpha);
+        [self applyCoverflowTransformToAttributes:attributes angle:angle alpha:alpha];
     }
-    CGFloat centetX = self.collectionView.contentOffset.x + collectionViewWidth/2;
-    CGFloat delta = ABS(attributes.center.x - centetX);
-    CGFloat angle = MIN(delta/collectionViewWidth*(1-_layout.rateOfChange), _layout.maximumAngle);
-    CGFloat alpha = MAX(1 - delta/collectionViewWidth, _layout.minimumAlpha);
-    [self applyCoverflowTransformToAttributes:attributes angle:angle alpha:alpha];
 }
 
 - (void)applyCoverflowTransformToAttributes:(UICollectionViewLayoutAttributes *)attributes angle:(CGFloat)angle alpha:(CGFloat)alpha {
-    MFTransformLayoutItemDirection direction = [self directionWithCenterX:attributes.center.x];
+    MFTransformLayoutItemDirection direction = [self directionWithCenter:attributes.center];
     CATransform3D transform3D = CATransform3DIdentity;
     transform3D.m34 = -0.002;
     CGFloat translate = 0;
     switch (direction) {
-            case MFTransformLayoutItemLeft:
-            translate = (1-cos(angle*1.2*M_PI))*attributes.size.width;
+            case MFTransformLayoutItemBefore:
+            translate = (1-cos(angle*1.2*M_PI))*((self.scrollDirection == UICollectionViewScrollDirectionHorizontal) ? attributes.size.width : attributes.size.height);
             break;
-            case MFTransformLayoutItemRight:
-            translate = -(1-cos(angle*1.2*M_PI))*attributes.size.width;
+            case MFTransformLayoutItemAfter:
+            translate = -(1-cos(angle*1.2*M_PI))*((self.scrollDirection == UICollectionViewScrollDirectionHorizontal) ? attributes.size.width : attributes.size.height);
             angle = -angle;
             break;
         default:
