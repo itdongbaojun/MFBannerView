@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// layout类型
 typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
-    MFBannerLayoutLayoutNormal,
-    MFBannerLayoutLayoutLinear,
+    MFBannerLayoutNormal,
+    MFBannerLayoutLinear,
     MFBannerLayoutCoverflow
 };
 

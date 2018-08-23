@@ -195,11 +195,11 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
     
-    return _layout.layoutType == MFBannerLayoutLayoutNormal ? [super shouldInvalidateLayoutForBoundsChange:newBounds] : YES;
+    return _layout.layoutType == MFBannerLayoutNormal ? [super shouldInvalidateLayoutForBoundsChange:newBounds] : YES;
 }
 
 - (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-    if (_delegateFlags.applyTransformToAttributes || _layout.layoutType != MFBannerLayoutLayoutNormal) {
+    if (_delegateFlags.applyTransformToAttributes || _layout.layoutType != MFBannerLayoutNormal) {
         NSArray *attributesArray = [[NSArray alloc] initWithArray:[super layoutAttributesForElementsInRect:rect] copyItems:YES];
         CGRect visibleRect = {self.collectionView.contentOffset,self.collectionView.bounds.size};
         for (UICollectionViewLayoutAttributes *attributes in attributesArray) {
@@ -221,7 +221,7 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
     UICollectionViewLayoutAttributes *attributes = [super layoutAttributesForItemAtIndexPath:indexPath];
     if (_delegateFlags.initializeTransformAttributes) {
         [_delegate bannerViewTransformLayout:self initializeTransformAttributes:attributes];
-    }else if(_layout.layoutType != MFBannerLayoutLayoutNormal){
+    }else if(_layout.layoutType != MFBannerLayoutNormal){
         [self initializeTransformAttributes:attributes layoutType:_layout.layoutType];
     }
     return attributes;
@@ -231,7 +231,7 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 
 - (void)initializeTransformAttributes:(UICollectionViewLayoutAttributes *)attributes layoutType:(MFBannerLayoutType)layoutType {
     switch (layoutType) {
-            case MFBannerLayoutLayoutLinear:
+            case MFBannerLayoutLinear:
         {
             [self applyLinearTransformToAttributes:attributes scale:_layout.minimumScale alpha:_layout.minimumAlpha];
             break;
@@ -248,7 +248,7 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 
 - (void)applyTransformToAttributes:(UICollectionViewLayoutAttributes *)attributes layoutType:(MFBannerLayoutType)layoutType {
     switch (layoutType) {
-            case MFBannerLayoutLayoutLinear:
+            case MFBannerLayoutLinear:
             [self applyLinearTransformToAttributes:attributes];
             break;
             case MFBannerLayoutCoverflow:
@@ -364,11 +364,15 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
     if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
         transform3D = CATransform3DRotate(transform3D, M_PI*angle, 0, 1, 0);
     }else{
-        transform3D = CATransform3DRotate(transform3D, M_PI*angle, 1, 0, 0);
+        transform3D = CATransform3DRotate(transform3D, M_PI*(-angle), 1, 0, 0);
     }
     
     if (_layout.adjustSpacingWhenScroling) {
-        transform3D = CATransform3DTranslate(transform3D, translate, 0, 0);
+        if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+            transform3D = CATransform3DTranslate(transform3D, translate, 0, 0);
+        }else{
+            transform3D = CATransform3DTranslate(transform3D, 0, translate, 0);
+        }
     }
     attributes.transform3D = transform3D;
     attributes.alpha = alpha;
