@@ -16,8 +16,21 @@
 @property (nonatomic, weak) UILabel *pageControl;
 @property (nonatomic, copy) NSArray *datas;
 
+//demo配置相关
 @property (nonatomic, weak) UILabel *horOrVerLabel;
 @property (nonatomic, weak) UISwitch *horOrVerSwitch;
+
+@property (nonatomic, weak) UILabel *loopLabel;
+@property (nonatomic, weak) UISwitch *loopSwitch;
+
+@property (nonatomic, weak) UILabel *autoLabel;
+@property (nonatomic, weak) UISwitch *autoSwitch;
+
+@property (nonatomic, weak) UILabel *mainLabel;
+@property (nonatomic, weak) UISwitch *mainSwitch;
+
+@property (nonatomic, weak) UILabel *typeLabel;
+@property (nonatomic, weak) UISegmentedControl *typeControl;
 
 @end
 
@@ -88,7 +101,7 @@
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    self.bannerView.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), CGRectGetWidth(self.view.frame));
+    self.bannerView.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 200);
     
     CGFloat pageControlHeight = 18.f;
     CGFloat pageControlWidth = 33.f;
@@ -96,9 +109,27 @@
     CGFloat pageControlY = CGRectGetHeight(self.bannerView.frame) - 7.5f - pageControlHeight;
     self.pageControl.frame = CGRectMake(pageControlX, pageControlY, pageControlWidth, pageControlHeight);
     
-    self.horOrVerLabel.frame = CGRectMake(0, CGRectGetMaxY(self.bannerView.frame) + 15.0, 0, 0);
+    //demo配置
+    self.horOrVerLabel.frame = CGRectMake(10, CGRectGetMaxY(self.bannerView.frame) + 18.0, 0, 0);
     [self.horOrVerLabel sizeToFit];
-    self.horOrVerSwitch.frame = CGRectMake(CGRectGetMaxX(self.horOrVerLabel.frame), CGRectGetMaxY(self.bannerView.frame) + 10.0, 0, 0);
+    self.horOrVerSwitch.frame = CGRectMake(CGRectGetMaxX(self.horOrVerLabel.frame) + 10, CGRectGetMaxY(self.bannerView.frame) + 10.0, 0, 0);
+    
+    self.loopLabel.frame = CGRectMake(CGRectGetMaxX(self.horOrVerSwitch.frame) + 50.0, CGRectGetMinY(self.horOrVerLabel.frame), 0, 0);
+    [self.loopLabel sizeToFit];
+    self.loopSwitch.frame = CGRectMake(CGRectGetMaxX(self.loopLabel.frame) + 10, CGRectGetMinY(self.horOrVerSwitch.frame), 0, 0);
+    
+    self.autoLabel.frame = CGRectMake(10, CGRectGetMaxY(self.horOrVerLabel.frame) + 38.0, 0, 0);
+    [self.autoLabel sizeToFit];
+    self.autoSwitch.frame = CGRectMake(CGRectGetMaxX(self.autoLabel.frame) + 10, CGRectGetMaxY(self.horOrVerLabel.frame) + 30.0, 0, 0);
+    
+    self.mainLabel.frame = CGRectMake(CGRectGetMaxX(self.autoSwitch.frame) + 30.0, CGRectGetMaxY(self.horOrVerLabel.frame) + 38.0, 0, 0);
+    [self.mainLabel sizeToFit];
+    self.mainSwitch.frame = CGRectMake(CGRectGetMaxX(self.mainLabel.frame) + 10, CGRectGetMaxY(self.horOrVerLabel.frame) + 30.0, 0, 0);
+    
+    self.typeLabel.frame = CGRectMake(10, CGRectGetMaxY(self.autoLabel.frame) + 38.0, 0, 0);
+    [self.typeLabel sizeToFit];
+    self.typeControl.frame = CGRectMake(CGRectGetMaxX(self.typeLabel.frame) + 10, CGRectGetMaxY(self.autoLabel.frame) + 30.0, 220, 30);
+    
 }
 
 #pragma mark - MFBannerViewDataSource
@@ -119,10 +150,11 @@
 - (MFBannerLayout *)layoutForBannerView:(MFBannerView *)bannerView {
     
     MFBannerLayout *layout = [[MFBannerLayout alloc] init];
-    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.8);
+    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.6);
     layout.itemSpacing = 15.0;
-    layout.layoutType = MFBannerLayoutCoverflow;
+    layout.layoutType = _typeControl.selectedSegmentIndex;
     layout.scrollDirection = _horOrVerSwitch.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
+    layout.itemMainDimensionCenter = _mainSwitch.isOn;
     return layout;
 }
 
@@ -133,7 +165,7 @@
     self.pageControl.text = [NSString stringWithFormat:@"%@/%@",@(toIndex + 1),@(self.datas.count)];
 }
 
-#pragma mark - demo
+#pragma mark - demo 配置
 
 - (void)addSwitchView {
     
@@ -148,12 +180,91 @@
     [horOrVerSwitch addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:horOrVerSwitch];
     _horOrVerSwitch = horOrVerSwitch;
+    
+    
+    UILabel *loopLabel = [[UILabel alloc] init];
+    loopLabel.text = @"无限循环";
+    loopLabel.textColor = [UIColor blackColor];
+    loopLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:loopLabel];
+    _loopLabel = loopLabel;
+    
+    UISwitch *loopSwitch = [[UISwitch alloc] init];
+    [loopSwitch setOn:YES];
+    [loopSwitch addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:loopSwitch];
+    _loopSwitch = loopSwitch;
+    
+    
+    UILabel *autoLabel = [[UILabel alloc] init];
+    autoLabel.text = @"自动轮播";
+    autoLabel.textColor = [UIColor blackColor];
+    autoLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:autoLabel];
+    _autoLabel = autoLabel;
+    
+    UISwitch *autoSwitch = [[UISwitch alloc] init];
+    [autoSwitch setOn:YES];
+    [autoSwitch addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:autoSwitch];
+    _autoSwitch = autoSwitch;
+    
+    
+    UILabel *mainLabel = [[UILabel alloc] init];
+    mainLabel.text = @"主轴居中对齐(开)";
+    mainLabel.textColor = [UIColor blackColor];
+    mainLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:mainLabel];
+    _mainLabel = mainLabel;
+    
+    UISwitch *mainSwitch = [[UISwitch alloc] init];
+    [mainSwitch setOn:YES];
+    [mainSwitch addTarget:self action:@selector(switchChange:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:mainSwitch];
+    _mainSwitch = mainSwitch;
+    
+    
+    UILabel *typeLabel = [[UILabel alloc] init];
+    typeLabel.text = @"布局样式";
+    typeLabel.textColor = [UIColor blackColor];
+    typeLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:typeLabel];
+    _typeLabel = typeLabel;
+    
+    UISegmentedControl *typeControl = [[UISegmentedControl alloc] initWithItems:@[@"Normal", @"Linear", @"Coverflow"]];
+    [typeControl addTarget:self action:@selector(segControlValueChange:) forControlEvents:UIControlEventValueChanged];
+    [typeControl setSelectedSegmentIndex:0];
+    [self.view addSubview:typeControl];
+    _typeControl = typeControl;
 }
 
 - (void)switchChange:(UISwitch *)sender {
     
-    self.horOrVerLabel.text = sender.isOn ? @"垂直滚动" : @"水平滚动";
-    self.bannerView.layout.scrollDirection = sender.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
+    if(sender == self.horOrVerSwitch){
+        self.horOrVerLabel.text = sender.isOn ? @"垂直滚动" : @"水平滚动";
+        self.bannerView.layout.scrollDirection = sender.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
+        [self.bannerView setNeedUpdateLayout];
+    }else if(sender == self.loopSwitch){
+        
+        self.loopLabel.text = sender.isOn ? @"无限循环" : @"不循环";
+        self.bannerView.isInfiniteLoop = sender.isOn;
+        [self.bannerView updateData];
+    }else if(sender == self.autoSwitch){
+        
+        self.autoLabel.text = sender.isOn ? @"自动轮播" : @"手动轮播";
+        self.bannerView.autoScrollInterval = sender.isOn ? 3.0 : 0.0;
+    }else if(sender == self.mainSwitch){
+        
+        self.mainLabel.text = sender.isOn ? @"主轴居中对齐(开)" : @"主轴居中对齐(关)";
+        self.bannerView.layout.itemMainDimensionCenter = sender.isOn;
+        [self.bannerView setNeedUpdateLayout];
+    }
+    
+}
+
+- (void)segControlValueChange:(UISegmentedControl *)sender {
+    
+    self.bannerView.layout.layoutType = sender.selectedSegmentIndex;
     [self.bannerView setNeedUpdateLayout];
 }
 

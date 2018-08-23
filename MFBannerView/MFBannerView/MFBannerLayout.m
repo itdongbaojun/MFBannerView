@@ -29,6 +29,7 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
         _maximumAngle = 0.2;
         _rateOfChange = 0.4;
         _adjustSpacingWhenScroling = YES;
+        _itemMainDimensionCenter = YES;
         _scrollDirection = MFBannerViewScrollDirectionHorizontal;
     }
     return self;
@@ -40,8 +41,8 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
     
     if(_scrollDirection == MFBannerViewScrollDirectionHorizontal){
      
-        CGFloat leftSpace = _pageView && !_isInfiniteLoop ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.left;
-        CGFloat rightSpace = _pageView && !_isInfiniteLoop ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.right;
+        CGFloat leftSpace = _pageView && !_isInfiniteLoop && _itemMainDimensionCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.left;
+        CGFloat rightSpace = _pageView && !_isInfiniteLoop && _itemMainDimensionCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.right;
         CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
         return UIEdgeInsetsMake(verticalSpace, leftSpace, verticalSpace, rightSpace);
     }else{
@@ -306,7 +307,11 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
                 alpha = 1.0;
                 break;
         }
-        transform = CGAffineTransformTranslate(transform,translate, 0);
+        if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+            transform = CGAffineTransformTranslate(transform,translate, 0);
+        }else{
+            transform = CGAffineTransformTranslate(transform,0, translate);
+        }
     }
     attributes.transform = transform;
     attributes.alpha = alpha;

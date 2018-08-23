@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, MFBannerViewScrollDirection) {
 @property (nonatomic, assign) CGFloat rateOfChange; // scale 和 angle 的变化速率 默认0.4
 @property (nonatomic, assign) BOOL adjustSpacingWhenScroling; //transform的过程中动态调整间距 默认YES
 
-/// isInfiniteLoop 为NO时 的第一个和最后一个item的主轴对齐方式。滚动方向为水平滚动时MFBannerViewScrollDirectionHorizontal，表示的是Horizontal方向的对其方式，反之表示的是Vertical方向的对齐方式
+/// isInfiniteLoop 为NO时 的第一个和最后一个item的主轴对齐方式。滚动方向为水平滚动时MFBannerViewScrollDirectionHorizontal，表示的是Horizontal方向的对其方式，反之表示的是Vertical方向的对齐方式 默认YES
 @property (nonatomic, assign) BOOL itemMainDimensionCenter;
 
 // 集中情况下的sectionInset
