@@ -32,6 +32,12 @@
 @property (nonatomic, weak) UILabel *typeLabel;
 @property (nonatomic, weak) UISegmentedControl *typeControl;
 
+@property (nonatomic, weak) UILabel *itemSizeLabel;
+@property (nonatomic, weak) UISlider *itemSizeSlider;
+
+@property (nonatomic, weak) UILabel *itemSpaceLabel;
+@property (nonatomic, weak) UISlider *itemSpaceSlider;
+
 @end
 
 @implementation ViewController
@@ -130,6 +136,13 @@
     [self.typeLabel sizeToFit];
     self.typeControl.frame = CGRectMake(CGRectGetMaxX(self.typeLabel.frame) + 10, CGRectGetMaxY(self.autoLabel.frame) + 30.0, 220, 30);
     
+    self.itemSizeLabel.frame = CGRectMake(10, CGRectGetMaxY(self.typeLabel.frame) + 38.0, 0, 0);
+    [self.itemSizeLabel sizeToFit];
+    self.itemSizeSlider.frame = CGRectMake(CGRectGetMaxX(self.itemSizeLabel.frame) + 10, CGRectGetMaxY(self.typeLabel.frame) + 30.0, 220, 30);
+    
+    self.itemSpaceLabel.frame = CGRectMake(10, CGRectGetMaxY(self.itemSizeLabel.frame) + 38.0, 0, 0);
+    [self.itemSpaceLabel sizeToFit];
+    self.itemSpaceSlider.frame = CGRectMake(CGRectGetMaxX(self.itemSpaceLabel.frame) + 10, CGRectGetMaxY(self.itemSizeLabel.frame) + 30.0, 220, 30);
 }
 
 #pragma mark - MFBannerViewDataSource
@@ -150,7 +163,7 @@
 - (MFBannerLayout *)layoutForBannerView:(MFBannerView *)bannerView {
     
     MFBannerLayout *layout = [[MFBannerLayout alloc] init];
-    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.6);
+    layout.itemSize = CGSizeMake(CGRectGetWidth(bannerView.frame)*0.8, CGRectGetHeight(bannerView.frame)*0.8);
     layout.itemSpacing = 15.0;
     layout.layoutType = _typeControl.selectedSegmentIndex;
     layout.scrollDirection = _horOrVerSwitch.isOn ? MFBannerViewScrollDirectionVertical : MFBannerViewScrollDirectionHorizontal;
@@ -236,6 +249,34 @@
     [typeControl setSelectedSegmentIndex:0];
     [self.view addSubview:typeControl];
     _typeControl = typeControl;
+    
+    
+    UILabel *itemSizeLabel = [[UILabel alloc] init];
+    itemSizeLabel.text = @"itemSize";
+    itemSizeLabel.textColor = [UIColor blackColor];
+    itemSizeLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:itemSizeLabel];
+    _itemSizeLabel = itemSizeLabel;
+    
+    UISlider *itemSizeSlider = [[UISlider alloc] init];
+    [itemSizeSlider addTarget:self action:@selector(sliderValueChange:) forControlEvents:UIControlEventValueChanged];
+    itemSizeSlider.value = 0.8;
+    [self.view addSubview:itemSizeSlider];
+    _itemSizeSlider = itemSizeSlider;
+    
+    
+    UILabel *itemSpaceLabel = [[UILabel alloc] init];
+    itemSpaceLabel.text = @"itemSpace";
+    itemSpaceLabel.textColor = [UIColor blackColor];
+    itemSpaceLabel.font = [UIFont systemFontOfSize:14.0];
+    [self.view addSubview:itemSpaceLabel];
+    _itemSpaceLabel = itemSpaceLabel;
+    
+    UISlider *itemSpaceSlider = [[UISlider alloc] init];
+    [itemSpaceSlider addTarget:self action:@selector(sliderValueChange:) forControlEvents:UIControlEventValueChanged];
+    itemSpaceSlider.value = 0.5;
+    [self.view addSubview:itemSpaceSlider];
+    _itemSpaceSlider = itemSpaceSlider;
 }
 
 - (void)switchChange:(UISwitch *)sender {
@@ -266,6 +307,18 @@
     
     self.bannerView.layout.layoutType = sender.selectedSegmentIndex;
     [self.bannerView setNeedUpdateLayout];
+}
+
+- (void)sliderValueChange:(UISlider *)sender {
+    
+    if(sender == self.itemSizeSlider){
+        self.bannerView.layout.itemSize = CGSizeMake(CGRectGetWidth(self.bannerView.frame)*sender.value, CGRectGetHeight(self.bannerView.frame)*sender.value);
+        [self.bannerView setNeedUpdateLayout];
+    }else if(sender == self.itemSpaceSlider){
+        
+        self.bannerView.layout.itemSpacing = 30 * sender.value;
+        [self.bannerView setNeedUpdateLayout];
+    }
 }
 
 @end
