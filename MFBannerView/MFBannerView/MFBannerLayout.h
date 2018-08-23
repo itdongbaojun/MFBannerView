@@ -49,15 +49,15 @@ typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
 @property (nonatomic, assign) BOOL itemVerticalCenter;
 
 /**
- first and last item horizontalc enter, when isInfiniteLoop is NO
+ first and last item horizontalc enter, when isInfiniteLoop is NO 只有在关闭循环轮播的情况下，第一个和最后一个item的对齐方式
  */
 @property (nonatomic, assign) BOOL itemHorizontalCenter;
 
 // sectionInset
-@property (nonatomic, assign, readonly) UIEdgeInsets onlyOneSectionInset;
-@property (nonatomic, assign, readonly) UIEdgeInsets firstSectionInset;
-@property (nonatomic, assign, readonly) UIEdgeInsets lastSectionInset;
-@property (nonatomic, assign, readonly) UIEdgeInsets middleSectionInset;
+@property (nonatomic, assign, readonly) UIEdgeInsets onlyOneSectionInset;   //关闭循环轮播时的sectionInset，只在一个section中进行的操作
+@property (nonatomic, assign, readonly) UIEdgeInsets firstSectionInset;     //打开循环轮播时，第一个section的inset
+@property (nonatomic, assign, readonly) UIEdgeInsets lastSectionInset;      //打开循环轮播时，最后一个section的inset
+@property (nonatomic, assign, readonly) UIEdgeInsets middleSectionInset;    //打开循环轮播时，中间的section的inset
 
 @end
 

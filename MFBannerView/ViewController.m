@@ -77,7 +77,6 @@
         [datas addObject:[UIColor colorWithRed:arc4random()%255/255.0 green:arc4random()%255/255.0 blue:arc4random()%255/255.0 alpha:arc4random()%255/255.0]];
     }
     self.datas = datas;
-    self.pageControl.text = [NSString stringWithFormat:@"1/%@",@(self.datas.count)];
     [self.bannerView reloadData];
 }
 

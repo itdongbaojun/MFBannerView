@@ -103,7 +103,9 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     collectionView.pagingEnabled = NO;
     collectionView.decelerationRate = 1-0.0076;
     if ([collectionView respondsToSelector:@selector(setPrefetchingEnabled:)]) {
-        collectionView.prefetchingEnabled = NO;
+        if (@available(iOS 10.0, *)) {  //只是为了处理警告
+            collectionView.prefetchingEnabled = NO;
+        }
     }
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.showsVerticalScrollIndicator = NO;
