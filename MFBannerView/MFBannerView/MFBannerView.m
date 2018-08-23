@@ -597,7 +597,7 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
     }else{
         
         if (fabs(velocity.y) < 0.35 || !MFEqualIndexSection(_beginDragIndexSection, _indexSection)) {
-            targetContentOffset->x = [self caculateOffsetAtIndexSection:_indexSection];
+            targetContentOffset->y = [self caculateOffsetAtIndexSection:_indexSection];
             return;
         }
         MFBannerScrollDirection direction = MFBannerScrollDirectionAfter;

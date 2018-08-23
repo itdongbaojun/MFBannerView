@@ -361,7 +361,12 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
             break;
     }
     
-    transform3D = CATransform3DRotate(transform3D, M_PI*angle, 0, 1, 0);
+    if(self.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+        transform3D = CATransform3DRotate(transform3D, M_PI*angle, 0, 1, 0);
+    }else{
+        transform3D = CATransform3DRotate(transform3D, M_PI*angle, 1, 0, 0);
+    }
+    
     if (_layout.adjustSpacingWhenScroling) {
         transform3D = CATransform3DTranslate(transform3D, translate, 0, 0);
     }
