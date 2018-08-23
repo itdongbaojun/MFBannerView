@@ -14,8 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
     MFBannerLayoutLayoutNormal,
     MFBannerLayoutLayoutLinear,
-    MFBannerLayoutCoverflow,
+    MFBannerLayoutCoverflow
 };
+
+/// 滚动方向
+typedef NS_ENUM(NSUInteger, MFBannerViewScrollDirection) {
+    MFBannerViewScrollDirectionHorizontal,
+    MFBannerViewScrollDirectionVertical
+};
+
 
 @class MFBannerTransformLayout;
 @protocol MFBannerTransformLayoutDelegate <NSObject>
@@ -33,7 +40,11 @@ typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
 @property (nonatomic, assign) CGFloat itemSpacing;
 @property (nonatomic, assign) UIEdgeInsets sectionInset;
 
+/// layout类型 默认MFBannerLayoutLayoutNormal 常规类型
 @property (nonatomic, assign) MFBannerLayoutType layoutType;
+
+/// 滚动方向，默认MFBannerViewScrollDirectionHorizontal水平滚动
+@property (nonatomic, assign) MFBannerViewScrollDirection scrollDirection;
 
 @property (nonatomic, assign) CGFloat minimumScale; // sacle  0.8
 @property (nonatomic, assign) CGFloat minimumAlpha; // alpha default 1.0
@@ -43,14 +54,7 @@ typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
 @property (nonatomic, assign) CGFloat rateOfChange; // scale and angle change rate
 @property (nonatomic, assign) BOOL adjustSpacingWhenScroling;
 
-/**
- pageView cell item vertical centering 注：从TYCyclePagerView的作者的代码实现来看，itemVerticalCenter并不是单纯处理了垂直方向上的对齐方式，而是同时影响了在isInfiniteLoop在YES的时候水平方向的居中对齐方式
- */
-@property (nonatomic, assign) BOOL itemVerticalCenter;
-
-/**
- first and last item horizontalc enter, when isInfiniteLoop is NO 只有在关闭循环轮播的情况下，第一个和最后一个item的对齐方式
- */
+/// first and last item horizontalc enter, when isInfiniteLoop is NO 只有在关闭循环轮播的情况下，第一个和最后一个item的对齐方式
 @property (nonatomic, assign) BOOL itemHorizontalCenter;
 
 // sectionInset

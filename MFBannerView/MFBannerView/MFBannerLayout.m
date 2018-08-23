@@ -24,12 +24,12 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 
 - (instancetype)init {
     if (self = [super init]) {
-        _itemVerticalCenter = YES;
         _minimumScale = 0.8;
         _minimumAlpha = 1.0;
         _maximumAngle = 0.2;
         _rateOfChange = 0.4;
         _adjustSpacingWhenScroling = YES;
+        _scrollDirection = MFBannerViewScrollDirectionHorizontal;
     }
     return self;
 }
@@ -37,38 +37,29 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
 #pragma mark - getter
 
 - (UIEdgeInsets)onlyOneSectionInset {
+    
     CGFloat leftSpace = _pageView && !_isInfiniteLoop && _itemHorizontalCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.left;
     CGFloat rightSpace = _pageView && !_isInfiniteLoop && _itemHorizontalCenter ? (CGRectGetWidth(_pageView.frame) - _itemSize.width)/2 : _sectionInset.right;
-    if (_itemVerticalCenter) {
-        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-        return UIEdgeInsetsMake(verticalSpace, leftSpace, verticalSpace, rightSpace);
-    }
-    return UIEdgeInsetsMake(_sectionInset.top, leftSpace, _sectionInset.bottom, rightSpace);
+    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+    return UIEdgeInsetsMake(verticalSpace, leftSpace, verticalSpace, rightSpace);
 }
 
 - (UIEdgeInsets)firstSectionInset {
-    if (_itemVerticalCenter) {
-        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-        return UIEdgeInsetsMake(verticalSpace, _sectionInset.left, verticalSpace, _itemSpacing);
-    }
-    return UIEdgeInsetsMake(_sectionInset.top, _sectionInset.left, _sectionInset.bottom, _itemSpacing);
+    
+    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+    return UIEdgeInsetsMake(verticalSpace, _sectionInset.left, verticalSpace, _itemSpacing);
 }
 
 - (UIEdgeInsets)lastSectionInset {
-    if (_itemVerticalCenter) {
-        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-        return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _sectionInset.right);
-    }
-    return UIEdgeInsetsMake(_sectionInset.top, 0, _sectionInset.bottom, _sectionInset.right);
+    
+    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+    return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _sectionInset.right);
 }
 
 - (UIEdgeInsets)middleSectionInset {
-    if (_itemVerticalCenter) {
-        CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
-        return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _itemSpacing);
-    }
-    // return _sectionInset; //原代码
-    return UIEdgeInsetsMake(_sectionInset.top, 0, _sectionInset.bottom, _itemSpacing);
+    
+    CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
+    return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _itemSpacing);
 }
 
 @end
@@ -116,6 +107,11 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
     self.itemSize = _layout.itemSize;
     self.minimumInteritemSpacing = _layout.itemSpacing;
     self.minimumLineSpacing = _layout.itemSpacing;
+    if(_layout.scrollDirection == MFBannerViewScrollDirectionHorizontal){
+        self.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    }else{
+        self.scrollDirection = UICollectionViewScrollDirectionVertical;
+    }
 }
 
 - (CGSize)itemSize {
