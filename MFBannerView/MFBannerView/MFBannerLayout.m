@@ -67,7 +67,7 @@ typedef NS_ENUM(NSUInteger, MFTransformLayoutItemDirection) {
         CGFloat verticalSpace = (CGRectGetHeight(_pageView.frame) - _itemSize.height)/2;
         return UIEdgeInsetsMake(verticalSpace, 0, verticalSpace, _itemSpacing);
     }
-    return _sectionInset;
+    return UIEdgeInsetsMake(_sectionInset.top, 0, _sectionInset.bottom, _itemSpacing);
 }
 
 @end

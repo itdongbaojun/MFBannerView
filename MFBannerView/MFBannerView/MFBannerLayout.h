@@ -44,7 +44,7 @@ typedef NS_ENUM(NSUInteger, MFBannerLayoutType) {
 @property (nonatomic, assign) BOOL adjustSpacingWhenScroling;
 
 /**
- pageView cell item vertical centering
+ pageView cell item vertical centering 注：从TYCyclePagerView的作者的代码实现来看，itemVerticalCenter并不是单纯处理了垂直方向上的对齐方式，而是同时影响了在isInfiniteLoop在YES的时候水平方向的居中对齐方式
  */
 @property (nonatomic, assign) BOOL itemVerticalCenter;
 
