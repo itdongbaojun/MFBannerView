@@ -1,11 +1,11 @@
 ## MFBannerView
- 一个支持水平方向和垂直方向的轮播组件
+a auto scroll banner view suport horizontal and vertical direction.
  
 ### CocoaPods
 待添加
 
 ### Requirements
-* Xcode 8 or higher
+* Xcode 9 or higher
 * iOS 8.0 or higher
 * ARC
 
