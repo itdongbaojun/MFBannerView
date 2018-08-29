@@ -157,6 +157,7 @@
     MFBannerCell *bannerCell = [bannerView dequeueReusableCellWithReuseIdentifier:@"BannerCellId" forIndex:index];
     bannerCell.backgroundColor = self.datas[index];
     bannerCell.label.text = [NSString stringWithFormat:@"index->%@",@(index + 1)];
+    bannerCell.layer.allowsEdgeAntialiasing = YES;
     return bannerCell;
 }
 
