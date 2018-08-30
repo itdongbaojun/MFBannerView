@@ -114,6 +114,8 @@ NS_INLINE MFIndexSection MFMakeIndexSection(NSInteger index, NSInteger section) 
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
+    [super willMoveToSuperview:newSuperview];
+    
     if (!newSuperview) {
         [self removeTimer];
     }else {
