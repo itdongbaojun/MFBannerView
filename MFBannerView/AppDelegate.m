@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MFListViewController.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    UINavigationController *navigationViewController = [[UINavigationController alloc] initWithRootViewController:[[MFListViewController alloc] init]];
+    self.window.rootViewController = navigationViewController;
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 

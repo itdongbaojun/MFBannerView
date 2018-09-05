@@ -1,18 +1,18 @@
 //
-//  MFBannerCell.m
+//  MFTextBannerCell.m
 //  MFBannerView
 //
 //  Created by 董宝君 on 2018/8/22.
 //  Copyright © 2018年 董宝君. All rights reserved.
 //
 
-#import "MFBannerCell.h"
+#import "MFTextBannerCell.h"
 
-@interface MFBannerCell()
+@interface MFTextBannerCell()
 @property (nonatomic, weak) UILabel *label;
 @end
 
-@implementation MFBannerCell
+@implementation MFTextBannerCell
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {

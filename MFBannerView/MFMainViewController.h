@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  MFMainViewController.h
 //  MFBannerView
 //
 //  Created by 董宝君 on 2018/8/22.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface MFMainViewController : UIViewController
 
 
 @end

@@ -1,5 +1,5 @@
 //
-//  MFBannerCell.h
+//  MFTextBannerCell.h
 //  MFBannerView
 //
 //  Created by 董宝君 on 2018/8/22.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 /// 业务方根据自己的需要定义自己需要的cell即可
-@interface MFBannerCell : UICollectionViewCell
+@interface MFTextBannerCell : UICollectionViewCell
 
 @property (nonatomic, weak, readonly) UILabel *label;
 

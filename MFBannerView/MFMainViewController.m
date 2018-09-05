@@ -1,16 +1,18 @@
 //
-//  ViewController.m
+//  MFMainViewController.m
 //  MFBannerView
 //
 //  Created by 董宝君 on 2018/8/22.
 //  Copyright © 2018年 董宝君. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "MFMainViewController.h"
 #import "MFBannerView.h"
-#import "MFBannerCell.h"
+#import "MFTextBannerCell.h"
 
-@interface ViewController ()<MFBannerViewDataSource, MFBannerViewDelegate>
+static NSString *const TextBannerCellIdentifier = @"TextBannerCellIdentifier";
+
+@interface MFMainViewController ()<MFBannerViewDataSource, MFBannerViewDelegate>
 
 @property (nonatomic, weak) MFBannerView *bannerView;
 @property (nonatomic, weak) UILabel *pageControl;
@@ -40,13 +42,14 @@
 
 @end
 
-@implementation ViewController
+@implementation MFMainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.title = @"MFBannerView";
+    self.title = @"Basic function";
+    self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     [self addBannerView];
@@ -73,7 +76,7 @@
     bannerView.dataSource = self;
     bannerView.delegate = self;
     // 业务方根据自己的需要自定义自己的cell，自己进行注册
-    [bannerView registerClass:[MFBannerCell class] forCellWithReuseIdentifier:@"BannerCellId"];
+    [bannerView registerClass:[MFTextBannerCell class] forCellWithReuseIdentifier:TextBannerCellIdentifier];
     [self.view addSubview:bannerView];
     _bannerView = bannerView;
 }
@@ -154,7 +157,7 @@
 
 - (UICollectionViewCell *)bannerView:(MFBannerView *)bannerView cellForItemAtIndex:(NSInteger)index {
     
-    MFBannerCell *bannerCell = [bannerView dequeueReusableCellWithReuseIdentifier:@"BannerCellId" forIndex:index];
+    MFTextBannerCell *bannerCell = [bannerView dequeueReusableCellWithReuseIdentifier:TextBannerCellIdentifier forIndex:index];
     bannerCell.backgroundColor = self.datas[index];
     bannerCell.label.text = [NSString stringWithFormat:@"index->%@",@(index + 1)];
     bannerCell.layer.allowsEdgeAntialiasing = YES;
