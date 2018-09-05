@@ -8,14 +8,16 @@
 
 #import "MFListViewController.h"
 #import "MFMainViewController.h"
+#import "MFBasicTitleCell.h"
+#import "MFMarqueeCell.h"
 #import <Masonry.h>
 
 static NSString *const ListCellIdentifier = @"ListCellIdentifier";
+static NSString *const MarqueeCellIdentifier = @"MarqueeCellIdentifier";
 
 @interface MFListViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, copy) NSArray *dataSource;
 
 @end
 
@@ -59,14 +61,21 @@ static NSString *const ListCellIdentifier = @"ListCellIdentifier";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return self.dataSource.count;
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ListCellIdentifier forIndexPath:indexPath];
-    cell.textLabel.text = self.dataSource[indexPath.row];
-    return cell;
+    if(indexPath.row == 0){
+        
+        MFBasicTitleCell *cell = [tableView dequeueReusableCellWithIdentifier:ListCellIdentifier forIndexPath:indexPath];
+        cell.label.text = @"Basic function ~ 基础功能示例";
+        return cell;
+    }else{
+     
+        MFMarqueeCell *cell = [tableView dequeueReusableCellWithIdentifier:MarqueeCellIdentifier forIndexPath:indexPath];
+        return cell;
+    }
 }
 
 #pragma mark - UITableViewDelegate
@@ -82,7 +91,11 @@ static NSString *const ListCellIdentifier = @"ListCellIdentifier";
                 [self.navigationController pushViewController:mainViewController animated:YES];
             }
             break;
+        case 1:
+        {
             
+        }
+            break;
         default:
             break;
     }
@@ -95,25 +108,18 @@ static NSString *const ListCellIdentifier = @"ListCellIdentifier";
     if(!_tableView){
         
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-        [_tableView registerClass:UITableViewCell.class forCellReuseIdentifier:ListCellIdentifier];
+        [_tableView registerClass:MFMarqueeCell.class forCellReuseIdentifier:MarqueeCellIdentifier];
+        [_tableView registerClass:MFBasicTitleCell.class forCellReuseIdentifier:ListCellIdentifier];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.rowHeight = 50.0;
+        _tableView.bounces = NO;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
         _tableView.tableFooterView = [UIView new];
     }
     
     return _tableView;
-}
-
-- (NSArray *)dataSource {
-    
-    if(!_dataSource){
-        
-        _dataSource = @[@"Basic function ~ 基础功能示例"];
-    }
-    
-    return _dataSource;
 }
 
 @end

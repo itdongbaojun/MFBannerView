@@ -17,6 +17,8 @@
 		9B433A55212D54CD00CA7B8C /* MFBannerLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A54212D54CD00CA7B8C /* MFBannerLayout.m */; };
 		9B433A58212D830000CA7B8C /* MFTextBannerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B433A57212D830000CA7B8C /* MFTextBannerCell.m */; };
 		9B6CC1F5213F7D4200B141A5 /* MFListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC1F4213F7D4200B141A5 /* MFListViewController.m */; };
+		9B6CC1FB213FB9AA00B141A5 /* MFMarqueeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC1FA213FB9AA00B141A5 /* MFMarqueeCell.m */; };
+		9B6CC1FE2140074E00B141A5 /* MFBasicTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6CC1FD2140074E00B141A5 /* MFBasicTitleCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,10 @@
 		9B433A57212D830000CA7B8C /* MFTextBannerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFTextBannerCell.m; sourceTree = "<group>"; };
 		9B6CC1F3213F7D4200B141A5 /* MFListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MFListViewController.h; sourceTree = "<group>"; };
 		9B6CC1F4213F7D4200B141A5 /* MFListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFListViewController.m; sourceTree = "<group>"; };
+		9B6CC1F9213FB9AA00B141A5 /* MFMarqueeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MFMarqueeCell.h; sourceTree = "<group>"; };
+		9B6CC1FA213FB9AA00B141A5 /* MFMarqueeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFMarqueeCell.m; sourceTree = "<group>"; };
+		9B6CC1FC2140074E00B141A5 /* MFBasicTitleCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MFBasicTitleCell.h; sourceTree = "<group>"; };
+		9B6CC1FD2140074E00B141A5 /* MFBasicTitleCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MFBasicTitleCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +96,10 @@
 				9B6CC1F4213F7D4200B141A5 /* MFListViewController.m */,
 				9B433A3C212D4D5300CA7B8C /* MFMainViewController.h */,
 				9B433A3D212D4D5300CA7B8C /* MFMainViewController.m */,
+				9B6CC1F9213FB9AA00B141A5 /* MFMarqueeCell.h */,
+				9B6CC1FA213FB9AA00B141A5 /* MFMarqueeCell.m */,
+				9B6CC1FC2140074E00B141A5 /* MFBasicTitleCell.h */,
+				9B6CC1FD2140074E00B141A5 /* MFBasicTitleCell.m */,
 				9B433A56212D830000CA7B8C /* MFTextBannerCell.h */,
 				9B433A57212D830000CA7B8C /* MFTextBannerCell.m */,
 				9B433A42212D4D5400CA7B8C /* Assets.xcassets */,
@@ -212,10 +222,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B433A58212D830000CA7B8C /* MFTextBannerCell.m in Sources */,
+				9B6CC1FE2140074E00B141A5 /* MFBasicTitleCell.m in Sources */,
 				9B433A3E212D4D5300CA7B8C /* MFMainViewController.m in Sources */,
 				9B433A55212D54CD00CA7B8C /* MFBannerLayout.m in Sources */,
 				9B433A52212D4E8700CA7B8C /* MFBannerView.m in Sources */,
 				9B6CC1F5213F7D4200B141A5 /* MFListViewController.m in Sources */,
+				9B6CC1FB213FB9AA00B141A5 /* MFMarqueeCell.m in Sources */,
 				9B433A49212D4D5400CA7B8C /* main.m in Sources */,
 				9B433A3B212D4D5300CA7B8C /* AppDelegate.m in Sources */,
 			);
